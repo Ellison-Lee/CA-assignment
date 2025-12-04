@@ -35,13 +35,15 @@ def fast_power(x, k, mod):
         k //= 2
     
     return ans
+
+    #3^3 
 def main():
     """主函数：读取输入并输出结果"""
     try:
         # 读取输入
-        first_line = input().strip()
+        first_line = input()
         while not first_line:  # 跳过空行
-            first_line = input().strip()
+            first_line = input()
         x, k = map(int, first_line.split())
         
         # 计算结果
