@@ -9,6 +9,24 @@ Evil Coordinate - 机器人避雷问题
 
 时间复杂度：O(n) - 只需要统计和模拟一次路径
 空间复杂度：O(1) - 只需要常数额外空间
+输出：5
+1 1
+RURULLD
+0 5
+UUU
+0 3
+UUU
+0 2
+UUU
+0 0
+UUU
+输出：
+LDLRUUR
+UUU
+Impossible
+Impossible
+Impossible
+
 """
 
 def check_path_safe(moves, mx, my):

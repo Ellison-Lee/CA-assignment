@@ -4,6 +4,24 @@
 预处理时间复杂度: O(N log N)
 查询时间复杂度: O(log N)
 空间复杂度: O(N log N)
+输入：
+5 5 4
+3 1
+2 4
+5 1
+1 4
+2 4
+3 2
+3 5
+1 2
+4 5
+输出：
+4
+4
+1
+4
+4
+
 """
 
 from collections import defaultdict

@@ -23,9 +23,7 @@ def max_subarray_sum(arr):
     n = len(arr)
     if n == 0:
         return 0
-    
-    # current_max: 以当前位置结尾的最大子数组和
-    # global_max: 全局最大子数组和
+        
     current_max = 0
     global_max = 0
     

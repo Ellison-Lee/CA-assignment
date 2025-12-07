@@ -1,3 +1,52 @@
+"""
+问题：Range Query（区间查询）
+给定一个初始数组，支持两种操作：
+1. 区间更新：将区间 [l, r] 中的所有元素加上 x
+2. 区间求和查询：查询区间 [l, r] 中所有元素的和
+
+算法：线段树（Segment Tree） + 懒惰标记（Lazy Propagation）
+- 使用线段树维护区间的总和信息
+- 使用懒惰标记延迟更新，避免每次更新都递归到底层
+- 当需要查询或更新子区间时，才将懒惰标记下推
+- 懒惰标记表示该区间内所有元素需要加上的值
+
+时间复杂度: 
+- 区间更新：O(log n)
+- 区间查询：O(log n)
+空间复杂度: O(n)
+
+输入格式：
+第一行：两个整数 n 和 q，用空格分隔（n为数组长度，q为操作数量）
+第二行：n 个整数，用空格分隔，表示初始数组
+接下来q行：每行表示一个操作
+  - 操作类型1：四个整数 1 l r x，表示将区间 [l, r] 中的所有元素加上 x
+  - 操作类型2：三个整数 2 l r，表示查询区间 [l, r] 中所有元素的和
+
+输出格式：
+对于每个操作类型2，输出查询结果
+
+示例：
+输入：
+5 10
+2 6 6 1 1
+2 1 4
+1 2 5 10
+2 1 3
+2 2 3
+1 2 2 8
+1 2 3 7
+1 4 4 10
+2 1 2
+1 4 5 6
+2 3 4
+输出：
+15
+34
+32
+33
+50
+"""
+
 class SegmentTreeNode:
     """线段树节点：维护区间总和和懒惰标记"""
     def __init__(self):
@@ -93,44 +142,39 @@ class SegmentTree:
         return self.query_range_sum(1, 0, self.n - 1, l - 1, r - 1)
 
 
-# Read first line safely
+# 读取输入
 try:
+    # 读取第一行
     first_line = input().strip()
-    while not first_line:  # Skip empty lines
+    while not first_line:  # 跳过空行
         first_line = input().strip()
     n, q = map(int, first_line.split())
-except EOFError:
-    exit()
-
-# Read initial array
-try:
+    
+    # 读取初始数组
     arr_line = input().strip()
-    while not arr_line:  # Skip empty lines
+    while not arr_line:  # 跳过空行
         arr_line = input().strip()
     initial_arr = list(map(int, arr_line.split()))
-except EOFError:
-    initial_arr = []
-
-# Initialize segment tree
-st = SegmentTree(initial_arr)
-
-# Process q operations
-for _ in range(q):
-    try:
+    
+    # 初始化线段树
+    st = SegmentTree(initial_arr)
+    
+    # 处理q个操作
+    for _ in range(q):
         op_line = input().strip()
-        while not op_line:  # Skip empty lines
+        while not op_line:  # 跳过空行
             op_line = input().strip()
         op_data = list(map(int, op_line.split()))
-    except EOFError:
-        break
-    
-    if op_data[0] == 1:
-        # Type 1: Range update [l, r] add x
-        l, r, x = op_data[1], op_data[2], op_data[3]
-        st.update(l, r, x)
-    else:
-        # Type 2: Range sum query [l, r]
-        l, r = op_data[1], op_data[2]
-        result = st.query(l, r)
-        print(result)
+        
+        if op_data[0] == 1:
+            # Type 1: Range update [l, r] add x
+            l, r, x = op_data[1], op_data[2], op_data[3]
+            st.update(l, r, x)
+        else:
+            # Type 2: Range sum query [l, r]
+            l, r = op_data[1], op_data[2]
+            result = st.query(l, r)
+            print(result)
+except EOFError:
+    exit(0)
 
