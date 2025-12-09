@@ -28,7 +28,6 @@
 
 输出格式：
 对于每个查询，输出区间 [x, y] 的最大子段和
-
 示例：
 输入：
 3
@@ -58,9 +57,9 @@ class SegmentTreeNode:
 class SegmentTree:
     """线段树：支持区间最大子段和查询"""
     def __init__(self, arr):
-        self.n = len(arr)
-        self.arr = arr
-        self.tree = [SegmentTreeNode() for _ in range(4 * self.n)]
+        self.n = len(arr)   #保存数组长度
+        self.arr = arr  #保存原始数组
+        self.tree = [SegmentTreeNode() for _ in range(4 * self.n)]  #初始化线段树数组（满二叉树，最多约4倍空间）
         self.build(1, 0, self.n - 1)
     
     def build(self, node, l, r):
@@ -71,9 +70,9 @@ class SegmentTree:
             return
         
         mid = (l + r) // 2
-        self.build(2 * node, l, mid)
-        self.build(2 * node + 1, mid + 1, r)
-        self.push_up(node, 2 * node, 2 * node + 1)
+        self.build(2 * node, l, mid)    #递归构建左子树
+        self.build(2 * node + 1, mid + 1, r)    #递归构建右子树
+        self.push_up(node, 2 * node, 2 * node + 1)  #合并左右子树的信息
     
     def push_up(self, parent, left, right):
         """合并左右子节点的信息"""

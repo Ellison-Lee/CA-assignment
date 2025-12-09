@@ -1,7 +1,6 @@
 """
 问题：Longest Increasing Subsequence（最长递增子序列）
 给定一个长度为n的整数序列，求其最长递增子序列（LIS）的长度。
-子序列是指从原序列中删除一些元素（可以不删除）后得到的序列，且保持相对顺序不变。
 
 算法：贪心 + 二分查找
 - 维护一个数组tails，其中tails[i]表示长度为i+1的递增子序列的最小末尾元素
@@ -12,20 +11,11 @@
 时间复杂度: O(n log n)
 空间复杂度: O(n)
 
-输入格式：
-第一行：一个整数 n，表示序列长度
-第二行：n 个整数，用空格分隔，表示序列
-
-输出格式：
-输出最长递增子序列的长度
-
-示例：
 输入：
 8
 10 9 2 5 3 7 101 18
 输出：
 4
-（最长递增子序列为 [2, 3, 7, 18] 或 [2, 3, 7, 101]，长度为4）
 """
 
 # 读取输入
@@ -41,9 +31,7 @@ try:
     while not nums_line:  # 跳过空行
         nums_line = input().strip()
     nums = list(map(int, nums_line.split()))
-    # 确保序列长度与n一致（处理可能的输入错误）
-    if len(nums) != n:
-        nums = nums[:n]  # 取前n个元素
+
 except EOFError:
     exit(0)
 
@@ -55,11 +43,11 @@ for num in nums:
         mid = (left + right) // 2
         if tails[mid] < num:
             left = mid + 1
-        else:
-            right = mid
-    if left == len(tails):
+        else: #找到目标位置
+            right = mid 
+    if left == len(tails): #如果找不到目标位置，则添加到末尾
         tails.append(num)
     else:
-        tails[left] = num
+        tails[left] = num #如果找到目标位置，则更新该位置的值
 
 print(len(tails))

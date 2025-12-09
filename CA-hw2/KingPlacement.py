@@ -1,6 +1,6 @@
 """
 题目：棋盘放置国王 (King Placement)
-使用状态压缩动态规划解决棋盘放置国王问题
+使用动态规划解决棋盘放置国王问题（不使用二进制压缩）
 
 问题描述：
 在 N×N 的棋盘上放置 K 个国王，要求：
@@ -8,7 +8,7 @@
 2. 相邻行之间，国王不能互相攻击（包括上下、左上、右上、左下、右下）
 
 输入格式：
-第一行：两个整数 N(1 ≤ N ≤ 10) 和 K(0 ≤ K ≤ N²)
+第一行：两个整数 N和 K
 
 输出格式：
 输出一个整数，表示满足条件的放置方案数
@@ -20,75 +20,108 @@
 16
 
 算法思路：
-- 使用状态压缩DP，将每行的放置状态用二进制表示
-- dp[k][state] 表示前i行放置k个国王，第i行状态为state的方案数
+- 用列表表示每行的放置状态，例如 [0,1,0] 表示第2个位置有国王
+- dp[k][state_idx] 表示前i行放置k个国王，第i行状态为state_idx的方案数
 - 使用滚动数组优化内存空间
 """
+
+def generate_valid_states(n):
+    """生成所有合法的行状态（行内国王不相邻）"""
+    states = []
+    
+    def backtrack(pos, current_state):
+        """递归生成状态"""
+        if pos == n:
+            states.append(current_state[:])
+            return
+        
+        # 不放国王
+        current_state.append(0)
+        backtrack(pos + 1, current_state)
+        current_state.pop()
+        
+        # 放国王（前提是前一个位置没有国王）
+        if pos == 0 or current_state[-1] == 0:
+            current_state.append(1)
+            backtrack(pos + 1, current_state)
+            current_state.pop()
+    
+    backtrack(0, [])
+    return states
+
+def count_kings(state):
+    """计算状态中国王的数量"""
+    return sum(state)
+
+def is_compatible(curr_state, prev_state):
+    """检查两行状态是否兼容（国王不互相攻击）"""
+    n = len(curr_state)
+    
+    for i in range(n):
+        if curr_state[i] == 1 and prev_state[i] == 1:
+            # 上下攻击
+            return False
+        
+        if curr_state[i] == 1:
+            # 检查左上
+            if i > 0 and prev_state[i - 1] == 1:
+                return False
+            # 检查右上
+            if i < n - 1 and prev_state[i + 1] == 1:
+                return False
+    
+    return True
 
 try:
     # 读取输入
     N, K = map(int, input().split())
     
     # 生成所有合法行状态
-    states = []
-    kingCount = []
+    states = generate_valid_states(N)
+    king_counts = [count_kings(state) for state in states]
+    state_count = len(states)
     
-    maxState = 1 << N
-    for s in range(maxState):
-        # 检查行内是否有相邻的国王
-        if s & (s << 1):
-            continue
-        
-        # 计算该状态的国王数量
-        count = bin(s).count('1')
-        states.append(s)
-        kingCount.append(count)
-    
-    stateCount = len(states)
-    
-    # 使用二维DP数组优化内存使用
-    # dp[i][j] 表示前i行，已放置j个国王的方案数
-    dp = [[0] * stateCount for _ in range(K + 1)]
-    next_dp = [[0] * stateCount for _ in range(K + 1)]
+    # 使用二维DP数组
+    # dp[k][j] 表示已放置k个国王，当前行状态为states[j]的方案数
+    dp = [[0] * state_count for _ in range(K + 1)]
+    next_dp = [[0] * state_count for _ in range(K + 1)]
     
     # 初始化：第0行
-    for j in range(stateCount):
-        kings = kingCount[j]
+    for j in range(state_count):
+        kings = king_counts[j]
         if kings <= K:
             dp[kings][j] = 1
     
     # 逐行处理
-    for i in range(1, N):
+    for row in range(1, N):
         # 清空next_dp
         for k in range(K + 1):
-            next_dp[k] = [0] * stateCount
+            next_dp[k] = [0] * state_count
         
-        for j in range(stateCount):
-            currState = states[j]
-            currKings = kingCount[j]
+        # 枚举当前行的所有状态
+        for curr_j in range(state_count):
+            curr_state = states[curr_j]
+            curr_kings = king_counts[curr_j]
             
-            for prevJ in range(stateCount):
-                prevState = states[prevJ]
+            # 枚举上一行的所有状态
+            for prev_j in range(state_count):
+                prev_state = states[prev_j]
                 
                 # 检查两行状态是否兼容
-                if currState & prevState:  # 上下攻击
-                    continue
-                if currState & (prevState << 1):  # 右上/左下攻击
-                    continue
-                if (currState << 1) & prevState:  # 左上/右下攻击
+                if not is_compatible(curr_state, prev_state):
                     continue
                 
                 # 转移状态
-                for k in range(currKings, K + 1):
-                    if dp[k - currKings][prevJ] > 0:
-                        next_dp[k][j] += dp[k - currKings][prevJ]
+                for k in range(curr_kings, K + 1):
+                    if dp[k - curr_kings][prev_j] > 0:
+                        next_dp[k][curr_j] += dp[k - curr_kings][prev_j]
         
         # 交换dp和next_dp
         dp, next_dp = next_dp, dp
     
     # 统计所有最终状态
     result = 0
-    for j in range(stateCount):
+    for j in range(state_count):
         result += dp[K][j]
     
     print(result)
