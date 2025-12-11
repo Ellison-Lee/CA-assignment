@@ -22,14 +22,10 @@
 try:
     # 读取第一行（n的值）
     n_line = input().strip()
-    while not n_line:  # 跳过空行
-        n_line = input().strip()
     n = int(n_line)
     
     # 读取第二行（序列）
     nums_line = input().strip()
-    while not nums_line:  # 跳过空行
-        nums_line = input().strip()
     nums = list(map(int, nums_line.split()))
 
 except EOFError:

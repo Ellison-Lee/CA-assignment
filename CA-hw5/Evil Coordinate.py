@@ -149,22 +149,16 @@ def main():
     try:
         # 读取第一行：测试用例数量
         first_line = input().strip()
-        while not first_line:  # 跳过空行
-            first_line = input().strip()
         T = int(first_line)
         
         # 处理每个测试用例
         for _ in range(T):
             # 读取地雷坐标
             mine_line = input().strip()
-            while not mine_line:  # 跳过空行
-                mine_line = input().strip()
             mx, my = map(int, mine_line.split())
             
             # 读取指令字符串
             instr_line = input().strip()
-            while not instr_line:  # 跳过空行
-                instr_line = input().strip()
             instructions = instr_line
             
             # 求解并输出结果

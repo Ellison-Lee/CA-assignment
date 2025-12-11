@@ -146,20 +146,14 @@ class SegmentTree:
 try:
     # 读取第一行
     first_line = input().strip()
-    while not first_line:  # 跳过空行
-        first_line = input().strip()
     N = int(first_line)
     
     # 读取数组
     arr_line = input().strip()
-    while not arr_line:  # 跳过空行
-        arr_line = input().strip()
     A = list(map(int, arr_line.split()))
     
     # 读取M
     m_line = input().strip()
-    while not m_line:  # 跳过空行
-        m_line = input().strip()
     M = int(m_line)
     
     # 构建线段树
@@ -168,8 +162,6 @@ try:
     # 处理M个查询
     for _ in range(M):
         query_line = input().strip()
-        while not query_line:  # 跳过空行
-            query_line = input().strip()
         x, y = map(int, query_line.split())
         result = st.query_range(x, y)
         print(result)

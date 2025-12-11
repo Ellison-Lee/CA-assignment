@@ -146,14 +146,10 @@ class SegmentTree:
 try:
     # 读取第一行
     first_line = input().strip()
-    while not first_line:  # 跳过空行
-        first_line = input().strip()
     n, q = map(int, first_line.split())
     
     # 读取初始数组
     arr_line = input().strip()
-    while not arr_line:  # 跳过空行
-        arr_line = input().strip()
     initial_arr = list(map(int, arr_line.split()))
     
     # 初始化线段树
@@ -162,8 +158,6 @@ try:
     # 处理q个操作
     for _ in range(q):
         op_line = input().strip()
-        while not op_line:  # 跳过空行
-            op_line = input().strip()
         op_data = list(map(int, op_line.split()))
         
         if op_data[0] == 1:

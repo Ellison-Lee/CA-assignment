@@ -129,8 +129,6 @@ def main():
     try:
         # 读取第一行：节点数 N、查询数 M、根节点 S
         first_line = input().strip()
-        while not first_line:  # 跳过空行
-            first_line = input().strip()
         n, m, s = map(int, first_line.split())
         
         # 创建 LCA 对象
@@ -139,8 +137,6 @@ def main():
         # 读取 N-1 条边（树有 N-1 条边）
         for _ in range(n - 1):
             line = input().strip()
-            while not line:  # 跳过空行
-                line = input().strip()
             x, y = map(int, line.split())
             lca.add_edge(x, y)
         
@@ -150,8 +146,6 @@ def main():
         # 处理 M 个查询
         for _ in range(m):
             line = input().strip()
-            while not line:  # 跳过空行
-                line = input().strip()
             a, b = map(int, line.split())
             
             # 查询并输出结果

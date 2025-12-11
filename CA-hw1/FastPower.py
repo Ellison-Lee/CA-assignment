@@ -42,8 +42,6 @@ def main():
     try:
         # 读取输入
         first_line = input()
-        while not first_line:  # 跳过空行
-            first_line = input()
         x, k = map(int, first_line.split())
         
         # 计算结果

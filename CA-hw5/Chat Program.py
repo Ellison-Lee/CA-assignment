@@ -82,14 +82,10 @@ def main():
     try:
         # 读取第一行：n, k, m, c, d
         first_line = input().strip()
-        while not first_line:  # 跳过空行
-            first_line = input().strip()
         n, k, m, c, d = map(int, first_line.split())
         
         # 读取第二行：序列a
         second_line = input().strip()
-        while not second_line:  # 跳过空行
-            second_line = input().strip()
         a = list(map(int, second_line.split()))
         
         # 求解并输出结果

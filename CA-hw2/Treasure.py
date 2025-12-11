@@ -31,8 +31,6 @@
 # 读取第一行
 try:
     first_line = input().strip()
-    while not first_line:  # 跳过空行
-        first_line = input().strip()
     n, W = map(int, first_line.split())
 except EOFError:
     print(0)
@@ -44,8 +42,6 @@ dp = [0] * (W + 1)
 for _ in range(n):
     try:
         line = input().strip()
-        while not line:  # 跳过空行
-            line = input().strip()
         v, w, m = map(int, line.split())
     except EOFError:
         break  # 输入不完整，处理剩余部分

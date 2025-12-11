@@ -110,16 +110,12 @@ def main():
     try:
         # 读取第一行：顶点数n和边数m
         first_line = input().strip()
-        while not first_line:  # 跳过空行
-            first_line = input().strip()
         n, m = map(int, first_line.split())
         
         # 读取m条边
         edges = []
         for _ in range(m):
             line = input().strip()
-            while not line:  # 跳过空行
-                line = input().strip()
             u, v, w = map(int, line.split())
             edges.append((u, v, w))
         

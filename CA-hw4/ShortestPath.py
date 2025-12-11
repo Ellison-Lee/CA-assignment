@@ -94,8 +94,6 @@ def main():
     try:
         # 读取第一行：顶点数n、边数m、起点s、终点t
         first_line = input().strip()
-        while not first_line:  # 跳过空行
-            first_line = input().strip()
         n, m, s, t = map(int, first_line.split())
         
         # 构建邻接表
@@ -105,8 +103,6 @@ def main():
         # 读取m条边
         for _ in range(m):
             line = input().strip()
-            while not line:  # 跳过空行
-                line = input().strip()
             u, v, w = map(int, line.split())
             
             # 无向图：添加双向边
