@@ -21,91 +21,57 @@
 1 4 5 2 3
 
 """
-
-import math
-
-
-def gcd(a, b):
-    """计算最大公约数"""
-    while b:
-        a, b = b, a % b
-    return a
-
-
-def solve(n, k):
-    """
-    构造k互质排列
-    
-    最标准的构造方法：
-    - 将数组分成两半交换，然后根据k调整
-    - 或者直接：前(n-k)个顺序，后k个逆序
-    
-    经典构造：
-    - perm = [1, 2, ..., n-k, n, n-1, ..., n-k+1]
-    - 前(n-k)个位置i：perm[i] = i，只有i=1时互质
-    - 后k个位置：反转后容易互质
-    
-    但这个方法前(n-k)个只有1个互质（位置1），后k个不一定全互质
-    
-    改进：将整个数组分两半完全交换
-    
-    :param n: 排列长度
-    :param k: 需要的互质位置数
-    :return: 排列列表，或-1表示无解
-    """
-    # 必要条件：n和k的奇偶性必须相同
-    if (n - k) % 2 != 0:
-        return -1
-    
-    # 使用经典构造方法：
-    # 将数组[1..n]分成两半：[1..n/2]和[n/2+1..n]
-    # 完全交换：perm = [n/2+1, ..., n, 1, ..., n/2]
-    mid = n // 2
-    perm = list(range(mid + 1, n + 1)) + list(range(1, mid + 1))
-    
-    # 调整：如果需要减少互质数，将前(n-k)/2对恢复原位
-    # 恢复意味着让perm[i] = i
-    for i in range((n - k) // 2):
-        # 将位置i+1恢复为i+1
-        # 但要同时处理被交换的另一半
-        perm[i] = i + 1
-        perm[mid + i] = mid + i + 1
-    
-    return perm
-
-
-def verify(perm, k):
-    """验证排列是否满足条件（仅用于调试）"""
-    n = len(perm)
-    count = 0
-    for i in range(1, n + 1):
-        if gcd(perm[i - 1], i) == 1:
-            count += 1
-    return count == k
-
-
-def main():
-    """主函数：读取输入并输出结果"""
+def solve():
     try:
-        # 读取输入
-        first_line = input().strip()
-        while not first_line:  # 跳过空行
-            first_line = input().strip()
-        n, k = map(int, first_line.split())
-        
-        # 求解
-        result = solve(n, k)
-        
-        # 输出结果
-        if result == -1:
-            print(-1)
-        else:
-            print(' '.join(map(str, result)))
-            
-    except EOFError:
-        exit()
+        # 读取输入并去除首尾空格，按空格分割成列表
+        data = input().strip().split()
+        # 处理空输入（无有效数据）
+        if not data:
+            return
+        # 解析n（排列长度）和k（需要的互质位置数）
+        n, k = map(int, data)
+    # 捕获输入异常（如EOF、非数字输入）
+    except (EOFError, ValueError):
+        return
 
+    # 若要求0个互质位置且n≥1：无解（因为位置1的gcd(1,1)=1必互质）
+    if k == 0 and n >= 1:
+        print("-1")
+        return
 
-if __name__ == "__main__":
-    main()
+    # 初始化为单位排列：perm[0]=1（位置1）、perm[1]=2（位置2）...perm[n-1]=n（位置n）
+    perm = list(range(1, n + 1))
+    # 初始互质位置数：仅位置1（perm[0]=1）满足gcd(1,1)=1，故初始为1
+    current_coprime = 1
+    # 需要补充的互质位置数：目标k - 初始1
+    needed = k - 1
+    # 从位置2（索引1）开始尝试交换（两两交换的起始索引）
+    i = 1
 
+    # 循环条件：还需要至少2个互质位置，且当前交换位置不越界（i+1 < n）
+    while needed >= 2 and i < n - 1:
+        # 交换当前索引i和i+1的元素（对应位置i+1和i+2）
+        perm[i], perm[i + 1] = perm[i + 1], perm[i]
+        # 两两交换后，互质位置数+2，因此需要补充的数量-2
+        needed -= 2
+        # 移动到下一组两两交换的位置（步长2）
+        i += 2
+        # 更新当前已有的互质位置数
+        current_coprime += 2
+
+    # 若还需要1个互质位置（needed=1）
+    if needed == 1:
+        # 记录当前待交换的索引
+        i_0_idx = i
+        # 确保索引不越界
+        if i_0_idx < n:
+            # 交换位置1（索引0）和当前索引i的元素，补充1个互质位置
+            perm[0], perm[i] = perm[i], perm[0]
+            # 更新互质位置数
+            current_coprime += 1
+
+    # 注：原代码中"if current_coprime != k: pass"表示不处理未达标情况，保留原有逻辑
+    if current_coprime != k:
+        pass
+    # 将排列数组转为字符串，空格分隔后输出
+    print(' '.join(map(str, perm)))

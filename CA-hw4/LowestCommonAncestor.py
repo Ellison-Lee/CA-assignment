@@ -3,7 +3,6 @@
 使用倍增算法（Binary Lifting）
 预处理时间复杂度: O(N log N)
 查询时间复杂度: O(log N)
-空间复杂度: O(N log N)
 输入：
 5 5 4
 3 1
@@ -21,7 +20,6 @@
 1
 4
 4
-
 """
 
 from collections import defaultdict
@@ -44,7 +42,7 @@ class LCA:
         # 计算需要的最大跳跃层数 (log2(n) 向上取整)
         self.max_log = math.ceil(math.log2(n)) + 1 if n > 1 else 1
         
-        # up[u][i] 表示从节点 u 向上走 2^i 步到达的祖先
+        # up[u][i]二维数组 表示从节点 u 向上走 2^i 步到达的祖先
         # 如果不存在则为 -1
         self.up = [[-1] * self.max_log for _ in range(n + 1)]
         
