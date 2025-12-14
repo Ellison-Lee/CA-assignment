@@ -1,6 +1,6 @@
 """
 问题4: 最大子数组和 (Maximum Subarray Sum)
-使用Kadane算法计算数组的最大子数组和
+维护global max,current max
 时间复杂度: O(n)
 
 输入格式：
@@ -17,31 +17,18 @@
 输出：
 6
 """
-
-
-def max_subarray_sum(arr):
-    n = len(arr)
-    if n == 0:
-        return 0
-        
-    current_max = 0
-    global_max = 0
-    
-    for num in arr:
-        # 要么将当前数字加入现有子数组，要么从当前数字开始新的子数组
-        current_max = max(0, current_max + num)
-        # 更新全局最大值
-        global_max = max(global_max, current_max)
-    
-    return global_max
-
-# 读取输入
+#读取数据
 try:
     n = int(input())
-    arr = list(map(int, input().split()))
+    arr = list(map(int,input().split()))
 except EOFError:
     exit()
 
-# 计算并输出结果
-result = max_subarray_sum(arr)
-print(result)
+c_max = 0 #当前最大值
+g_max = 0 #全局最大值
+
+for num in arr:
+    c_max = max(0,c_max+num) #如果当前数组和为负，则从下一个数重新开始
+    g_max = max(c_max,g_max)
+
+print(g_max)

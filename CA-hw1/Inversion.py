@@ -3,10 +3,6 @@
 题目：给定一个数组，计算数组中逆序对的数量
 逆序对定义：如果 i < j 且 arr[i] > arr[j]，则 (i, j) 是一个逆序对
 
-算法：使用归并排序计算逆序对数量
-- 在归并过程中，如果右半部分的元素小于左半部分的元素
-- 则说明该右半部分元素与左半部分剩余的所有元素都构成逆序对
-
 时间复杂度: O(n log n)
 
 输入格式：
@@ -18,7 +14,6 @@
 输出格式：
 对于每个测试用例，输出逆序对的数量
 
-示例：
 输入：
 1
 5
@@ -27,64 +22,55 @@
 10
 """
 
+def merge_sort(arr,temp,left,right):
+    """ 递归执行归并 """
+    count = 0
+    mid = left+(right-left)//2 #分成左右递归执行
+    if left < right: 
+        count += merge_sort(arr,temp,left,mid)
+        count += merge_sort(arr,temp,mid+1,right)
+        count += merge(arr,temp,left,mid,right) #合并
 
-# 合并并统计逆序对数量
-def merge_and_count(arr, temp, left, mid, right):
-    i, j, k = left, mid + 1, left
-    inv_count = 0
+    return count
+
+def merge(arr,temp,left,mid,right):
+    """归并排序的合并部分"""
+    for inx in range(left,right+1): #复制临时数组
+        temp[inx] = arr[inx] 
     
-    # 复制到临时数组
-    for idx in range(left, right + 1):
-        temp[idx] = arr[idx]
-    
-    # 合并两个有序子数组并统计逆序对
-    while i <= mid and j <= right:
-        if temp[i] <= temp[j]:
+    i,j,k = left,mid+1,left #k表示当前真实数组arr更新的位置
+    count = 0
+    while i<= mid and j <=right: #正序
+        if temp[i]<=temp[j]:
             arr[k] = temp[i]
             i += 1
             k += 1
-        else:
+        else: #发现逆序
             arr[k] = temp[j]
-            j += 1
             k += 1
-            # 左半部分剩余元素都与当前右元素构成逆序对
-            inv_count += (mid - i + 1)
+            j += 1
+            count += mid-i+1 #左右部分内部有序，小于第i个 就是 小于i后面所有
     
-    # 复制左半部分剩余元素
-    while i <= mid:
+    while i<=mid: #更新因为逆序而跳过的数
         arr[k] = temp[i]
         i += 1
         k += 1
-    # 右半部分剩余元素无需处理（已在原数组）
     
-    return inv_count
+    return count
 
-
-# 归并排序并统计逆序对总数
-def merge_sort_and_count(arr, temp, left, right):
-    inv_count = 0
-    if left < right:
-        mid = left + (right - left) // 2  # 避免溢出
-        
-        # 分治处理左右子数组
-        inv_count += merge_sort_and_count(arr, temp, left, mid)
-        inv_count += merge_sort_and_count(arr, temp, mid + 1, right)
-        # 合并并统计当前层逆序对
-        inv_count += merge_and_count(arr, temp, left, mid, right)
-    return inv_count
-
-
-# 读取输入
 try:
-    T = int(input())
+    t = int(input())
     
-    for _ in range(T):
+    for _ in range(t):
         n = int(input())
-        arr = list(map(int, input().split()))
-        temp = [0] * n  # 临时数组，避免重复分配
-        
-        # 计算逆序对总数
-        result = merge_sort_and_count(arr, temp, 0, n - 1)
-        print(result)
+        arry = list(map(int,input().split()))
+        temp = [0]*n
+        count = merge_sort(arry,temp,0,n-1)
+        print(count)
 except EOFError:
     exit()
+
+
+
+    
+

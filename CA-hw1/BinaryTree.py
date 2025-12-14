@@ -19,82 +19,39 @@ DEBFCA
 
 
 class TreeNode:
-    """二叉树节点类"""
-    def __init__(self, val=0, left=None, right=None):
+    def __init__(self,val,left=None,right=None):
         self.val = val
         self.left = left
         self.right = right
 
-
-def build_tree(preorder, inorder):
-    """
-    根据先序和中序遍历重建二叉树
-    
-    算法原理：
-    - 先序遍历的第一个元素是根节点
-    - 在中序遍历中找到根节点，左边是左子树，右边是右子树
-    - 递归构建左右子树
-    
-    :param preorder: 先序遍历序列
-    :param inorder: 中序遍历序列
-    :return: 重建的二叉树根节点
-    """
-    if not preorder or not inorder:
+def build_tree(preorder,inorder):
+    if not preorder or not inorder: #递归结束条件
         return None
-    
-    # 先序遍历的第一个字符是根节点
-    root_val = preorder[0]
-    root = TreeNode(root_val)
-    
-    # 在中序遍历中找到根节点的位置
-    root_idx = inorder.index(root_val)
-    
-    # 递归构建左右子树
-    root.left = build_tree(preorder[1:root_idx+1], inorder[:root_idx])
-    root.right = build_tree(preorder[root_idx+1:], inorder[root_idx+1:])
-    
+
+    root = TreeNode(preorder[0])
+    idx = inorder.index(preorder[0]) #树元素有唯一性，可以直接通过值找到根节点在inorder的位置
+
+    root.left = build_tree(preorder[1:idx+1],inorder[:idx]) #递归建立左子树
+    root.right = build_tree(preorder[idx+1:],inorder[idx+1:]) #递归建立右子树
+
     return root
 
-
-def postorder_traversal(root):
-    """
-    后序遍历：左->右->根
-    
-    :param root: 二叉树根节点
-    :return: 后序遍历结果字符串
-    """
-    if not root:
+def postorder_query(root):
+    if root is None: #递归遍历结束标志
         return ""
     
-    left = postorder_traversal(root.left)
-    right = postorder_traversal(root.right)
-    
-    return left + right + root.val
+    left = postorder_query(root.left)
+    right = postorder_query(root.right)
+
+    return left+right+root.val
 
 
-def main():
-    """主函数：读取输入并输出结果"""
-    try:
-        while True:
-            # 读取输入
-            line = input().strip()
-            if not line:  # 空行表示结束
-                break
-            
-            parts = line.split()
-            if len(parts) == 2:
-                preorder, inorder = parts
-                # 重建二叉树
-                root = build_tree(preorder, inorder)
-                # 后序遍历
-                postorder = postorder_traversal(root)
-                # 输出结果
-                print(postorder)
-                
-    except EOFError:
-        exit()
-
-
-if __name__ == "__main__":
-    main()
-
+try:
+    while True:
+        line = input()
+        if not line: break
+        preorder,inorder = list(line.split())
+        root = build_tree(preorder,inorder)
+        print(postorder_query(root))
+except EOFError:
+    exit()
