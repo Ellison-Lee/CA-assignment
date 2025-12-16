@@ -25,8 +25,8 @@
 def merge_sort(arr,temp,left,right):
     """ 递归执行归并 """
     count = 0
-    mid = left+(right-left)//2 #分成左右递归执行
-    if left < right: 
+    mid = (left+right)//2 #分成左右递归执行
+    if left < right: # 递归结束条件
         count += merge_sort(arr,temp,left,mid)
         count += merge_sort(arr,temp,mid+1,right)
         count += merge(arr,temp,left,mid,right) #合并

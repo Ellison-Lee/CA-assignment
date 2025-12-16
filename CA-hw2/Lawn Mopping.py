@@ -8,7 +8,6 @@
 - 通过前缀和优化区间和的计算
 
 时间复杂度: O(n)
-空间复杂度: O(n)
 
 输入格式：
 第一行：两个整数 n 和 k，用空格分隔
@@ -28,66 +27,36 @@
 输出：
 12
 """
-
 from collections import deque
 
 try:
-    # 读取输入
-    n, k = map(int, input().split())
-    
-    # 特殊情况处理
-    if n == 0:
-        print(0)
-    
-    # 读取所有元素并计算前缀和
-    prefix = [0] * (n + 2)
-    for i in range(1, n + 1):
+    n,k = list(map(int,input().split()))
+    prefix = [0]*(n+2) #开始前，结束后有默认的2个隐形断点，所以prefix也有n+2个元素
+    for i in range(1,n+1):
         x = int(input())
-        prefix[i] = prefix[i - 1] + x
-    
-    # 特殊情况：如果k>=n，选择所有正数
-    if k >= n:
-        sum_val = 0
-        for i in range(1, n + 1):
-            val = prefix[i] - prefix[i - 1]
-            if val > 0:
-                sum_val += val
-        print(sum_val)
-    
-    # DP数组：max_sum[i]表示考虑前i个元素，且第i个位置不选时的最大和
-    max_sum = [0] * (n + 2)
-    breakpoint = deque()
-    
-    # 初始化：位置0作为起始断点
-    breakpoint.append(0)
-    max_sum[0] = 0
-    
-    # 核心迭代过程
-    for i in range(1, n + 2):
-        # 步骤A - 窗口维护：移除超出窗口范围的位置
-        while breakpoint and breakpoint[0] < i - k - 1:
-            breakpoint.popleft()
-        
-        # 步骤B - 最优决策
-        if breakpoint:
-            j = breakpoint[0]
-            # 状态转移：前j个元素的最优解 + j到i-1位置的元素和
-            max_sum[i] = max_sum[j] + (prefix[i - 1] - prefix[j])
-        
-        # 步骤C - 队列更新
-        # 从尾部移除所有不如当前位置i优的候选位置
-        while breakpoint:
-            last = breakpoint[-1]
-            # 比较标准：max_sum[last] - prefix[last] <= max_sum[i] - prefix[i]
-            if max_sum[last] - prefix[last] <= max_sum[i] - prefix[i]:
-                breakpoint.pop()
-            else:
-                break
-        breakpoint.append(i)
-    
-    # 输出最终结果
-    print(max_sum[n + 1])
+        prefix[i] = prefix[i-1]+x #计算前缀和
 except EOFError:
-    exit(0)
+    exit()
 
+max_sum = [0]*(n+2) #开始前，结束后有默认的2个隐形断点
+breakpoint = deque()
+breakpoint.append(0) #第0个元素当作断点
 
+for i in range(1,n+2):
+    while breakpoint[0] < i-k-1: #维护有效断点的窗口，两个断点相距k个元素
+        breakpoint.popleft()
+
+    if breakpoint:
+        j = breakpoint[0]
+        max_sum[i] = max_sum[j] + prefix[i-1]-prefix[j] #max_sum[i]表示第i个元素当断点时，[1:i]数组的最大和
+
+    while breakpoint:
+        last = breakpoint[-1]
+        if max_sum[last]-prefix[last] <= max_sum[i]-prefix[i]: #淘汰非最优的断点
+            breakpoint.pop()
+        else:
+            break
+        
+    breakpoint.append(i)
+
+print(max_sum[n+1])

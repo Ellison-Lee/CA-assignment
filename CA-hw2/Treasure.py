@@ -27,43 +27,25 @@
 输出：
 47
 """
-
-# 读取第一行
 try:
-    first_line = input().strip()
-    n, W = map(int, first_line.split())
+    n,total_w = list(map(int,input().split()))
+    dp = [0]*(total_w+1) #dp[i]是最大容量为i时，包内的最大价值
+
+    for _ in range(n): #按照每种物品开始dp
+        v,w,m = list(map(int,input().split()))
+        k = 1 #准备取的物品数量
+        remaining = m #当前剩余数量
+
+        while remaining > 0:
+            take = min(remaining,k) #避免多拿
+            val = take*v
+            wt = take*w
+            for i in range(total_w,wt-1,-1):
+                if dp[i-wt]+val > dp[i]: #状态转移：如果拿当前物品比已有的dp[i]的价值还大，就更新
+                    dp[i] = dp[i-wt]+val
+            remaining -= take
+            k *=2 #每次取物翻倍
+    print(max(dp))
 except EOFError:
-    print(0)
-    exit(0)
-
-# 初始化DP：dp[w] = 总重量为w时能获得的最大价值
-dp = [0] * (W + 1)
-
-for _ in range(n):
-    try:
-        line = input().strip()
-        v, w, m = map(int, line.split())
-    except EOFError:
-        break  # 输入不完整，处理剩余部分
+    exit()
     
-    # 跳过重量为0的物品
-    if w == 0:
-        continue
-    
-    # 有界背包使用二进制优化（拆分为2的幂次）
-    k = 1
-    remaining = m
-    while remaining > 0:
-        take = min(k, remaining)
-        val = take * v
-        wt = take * w
-        # 逆序更新DP，避免同一物品被重复使用
-        for j in range(W, wt - 1, -1):
-            if dp[j - wt] + val > dp[j]:
-                dp[j] = dp[j - wt] + val
-        remaining -= take
-        k *= 2
-
-# 答案是所有重量<=W中的最大价值
-print(max(dp))
-

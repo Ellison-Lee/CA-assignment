@@ -25,107 +25,82 @@
 - 使用滚动数组优化内存空间
 """
 
-def generate_valid_states(n):
-    """生成所有合法的行状态（行内国王不相邻）"""
+def gen_all_valid(n):
+    '''生成所有可能状态'''
     states = []
-    
-    def backtrack(pos, current_state):
-        """递归生成状态"""
+    def backtrack(pos,curr_state):
         if pos == n:
-            states.append(current_state[:])
+            states.append(curr_state[:])
             return
-        
-        # 不放国王
-        current_state.append(0)
-        backtrack(pos + 1, current_state)
-        current_state.pop()
-        
-        # 放国王（前提是前一个位置没有国王）
-        if pos == 0 or current_state[-1] == 0:
-            current_state.append(1)
-            backtrack(pos + 1, current_state)
-            current_state.pop()
+
+        curr_state.append(0) #先全加0
+        backtrack(pos+1,curr_state[:])
+        curr_state.pop() #撤回加的0，为下一步加1作准备
+
+        if pos == 0 or curr_state[-1]==0: #如果前一位不是0，就加1
+            curr_state.append(1)
+            backtrack(pos+1,curr_state[:])
+            curr_state.pop()#撤回加的0，为下一步加0作准备
     
-    backtrack(0, [])
+    backtrack(0,[])
     return states
 
-def count_kings(state):
-    """计算状态中国王的数量"""
-    return sum(state)
-
-def is_compatible(curr_state, prev_state):
-    """检查两行状态是否兼容（国王不互相攻击）"""
-    n = len(curr_state)
-    
-    for i in range(n):
-        if curr_state[i] == 1 and prev_state[i] == 1:
-            # 上下攻击
+def is_compatible(pre_state,curr_state):
+    '''检查当前行与上一行是否符合规则'''
+    for i in range(len(curr_state)):
+        if pre_state[i] == 1 and curr_state[i] == 1: #正上方不能有king
             return False
         
-        if curr_state[i] == 1:
-            # 检查左上
-            if i > 0 and prev_state[i - 1] == 1:
-                return False
-            # 检查右上
-            if i < n - 1 and prev_state[i + 1] == 1:
-                return False
-    
+        if i>0 and pre_state[i-1] == 1 and curr_state[i] == 1: #左上方不能有king
+            return False
+        
+        if i<len(curr_state)-1 and pre_state[i+1] == 1 and curr_state[i] == 1: #右上方不能有king
+            return False
+
     return True
 
+#读取数据
 try:
-    # 读取输入
-    N, K = map(int, input().split())
-    
-    # 生成所有合法行状态
-    states = generate_valid_states(N)
-    king_counts = [count_kings(state) for state in states]
-    state_count = len(states)
-    
-    # 使用二维DP数组
-    # dp[k][j] 表示已放置k个国王，当前行状态为states[j]的方案数
-    dp = [[0] * state_count for _ in range(K + 1)]
-    next_dp = [[0] * state_count for _ in range(K + 1)]
-    
-    # 初始化：第0行
-    for j in range(state_count):
-        kings = king_counts[j]
-        if kings <= K:
-            dp[kings][j] = 1
-    
-    # 逐行处理
-    for row in range(1, N):
-        # 清空next_dp
-        for k in range(K + 1):
-            next_dp[k] = [0] * state_count
-        
-        # 枚举当前行的所有状态
-        for curr_j in range(state_count):
-            curr_state = states[curr_j]
-            curr_kings = king_counts[curr_j]
-            
-            # 枚举上一行的所有状态
-            for prev_j in range(state_count):
-                prev_state = states[prev_j]
-                
-                # 检查两行状态是否兼容
-                if not is_compatible(curr_state, prev_state):
-                    continue
-                
-                # 转移状态
-                for k in range(curr_kings, K + 1):
-                    if dp[k - curr_kings][prev_j] > 0:
-                        next_dp[k][curr_j] += dp[k - curr_kings][prev_j]
-        
-        # 交换dp和next_dp
-        dp, next_dp = next_dp, dp
-    
-    # 统计所有最终状态
-    result = 0
-    for j in range(state_count):
-        result += dp[K][j]
-    
-    print(result)
-
+    n,k = list(map(int,input().split()))
 except EOFError:
-    exit(0)
+    exit()
 
+states = gen_all_valid(n) #生成当前所有可用状态
+kings_count = [sum(states[i]) for i in range(len(states))] #每个状态放了多少 king
+states_count = len(states) #状态数
+
+#初始化第0行dp
+dp = [[0]*states_count for _ in range(k+1)] #dp[i][j]表示当前行是j状态，目前所有行一共用了i个king
+next_dp = [[0]*states_count for _ in range(k+1)] #下一行的情况，意义同上
+
+for i in range(states_count): #去除掉放了超过k的king的情况
+    if kings_count[i] <=k:
+        dp[kings_count[i]][i]=1
+
+for row in range(1,n): #正式开始DP，从第一行开始
+    next_dp = [[0]*states_count for _ in range(k+1)]  #next_dp清零
+
+    for curr_i in range(states_count): #枚举当前行有效状态
+        curr_state = states[curr_i]
+        curr_kings = kings_count[curr_i]
+
+        for pre_i in range(states_count): #枚举上一行有效状态
+            pre_state = states[pre_i]
+
+            if not is_compatible(pre_state,curr_state): #检查是否匹配
+                continue
+            
+            #状态转移
+            for i in range(curr_kings,k+1): 
+            #当前行放了用了curr_kings个king，之前行有可能也放了king，所以从current_kings->k遍历
+                if dp[i-curr_kings][pre_i] > 0:
+                    next_dp[i][curr_i] += dp[i-curr_kings][pre_i]
+    
+    dp,next_dp = next_dp,dp
+
+#统计总方案数
+ans = 0
+for i in range(states_count):
+    ans += dp[-1][i]
+
+print(ans)

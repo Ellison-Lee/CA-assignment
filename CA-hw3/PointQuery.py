@@ -35,60 +35,38 @@
 输出：
 2
 """
-
-class FenwickTree:
-    """树状数组：用于维护差分数组的前缀和"""
-    def __init__(self, size):
+class fenwickTree:
+    def __init__(self,size):
         self.n = size
-        self.tree = [0] * (size + 1)
-    
-    def update(self, index, delta):
-        """在位置 index 加上 delta"""
-        while index <= self.n:
-            self.tree[index] += delta
-            index += index & -index
-    
-    def query(self, index):
-        """查询前缀和 [1, index]"""
-        res = 0
-        while index > 0:
-            res += self.tree[index]
-            index -= index & -index
-        return res
+        self.tree = [0]*(size+1) #树状数组储存的是差分数组，因此有效位置是1->size+1，第0位默认为0
 
+    def update(self,idx,delta):
+        while idx <= self.n:
+            self.tree[idx] += delta
+            idx += idx & -idx #按照树状数组性质，向上层传递delta
 
-# 读取输入
-try:
-    # 读取第一行
-    first_line = input().strip()
-    n, q = map(int, first_line.split())
-    
-    # 读取初始数组
-    arr_line = input().strip()
-    initial_arr = list(map(int, arr_line.split()))
-    
-    # 初始化树状数组维护差分数组，实现 O(log n) 的区间更新和点查询
-    ft = FenwickTree(n)
-    
-    # 处理q个操作
+    def query(self,idx):
+        ans = 0
+        while idx > 0:
+            ans += self.tree[idx]
+            idx -= idx & -idx #按照树状数组性质，向下层求和
+        return ans
+
+try: 
+    n,q = list(map(int,input().split()))
+    arr = list(map(int,input().split()))
+    tree = fenwickTree(n)
+
     for _ in range(q):
-        op_line = input().strip()
-        op_data = list(map(int, op_line.split()))
-        
-        if op_data[0] == 1:
-            # Type 1: Range update [l, r] add x
-            # 区间更新：在差分数组中，l 位置 +x，r+1 位置 -x
-            l, r, x = op_data[1], op_data[2], op_data[3]
-            ft.update(l, x)
-            if r + 1 <= n:
-                ft.update(r + 1, -x)
-        else:
-            # Type 2: Point query a[i]
-            # 点查询：初始值 + 差分数组的前缀和
-            i = op_data[1]
-            result = initial_arr[i - 1] + ft.query(i)
-            print(result)
-except EOFError:
-    exit(0)
+        info = list(map(int,input().split()))
+        if info[0] == 1: #区间加数
+            l,r,x = info[1:]
+            tree.update(l,x) #[l,r]位置+x，即在l处差分数组+x
+            tree.update(r+1,-x) #在r+1处差分数组-x
 
+        elif info[0] == 2: #查询元素
+            i = info[1]
+            print(arr[i-1]+tree.query(i))
+except EOFError:
+    exit()
 

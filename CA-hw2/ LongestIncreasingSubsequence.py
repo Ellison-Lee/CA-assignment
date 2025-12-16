@@ -18,32 +18,35 @@
 4
 """
 
-# 读取输入
+#读取输入
 try:
-    # 读取第一行（n的值）
-    n_line = input().strip()
-    n = int(n_line)
-    
-    # 读取第二行（序列）
-    nums_line = input().strip()
-    nums = list(map(int, nums_line.split()))
-
+    n = int(input())
+    arr = list(map(int,input().split()))
 except EOFError:
-    exit(0)
+    exit()
 
-tails = []
-for num in nums:
-    # 手动二分查找：找到第一个 >= num 的位置
-    left, right = 0, len(tails)
+tail = []
+
+for num in arr: 
+    #二分查找tail数组种第一个 > num的位置
+    left,right = 0,len(tail)
+    mid = (left+right)//2
+
     while left < right:
-        mid = (left + right) // 2
-        if tails[mid] < num:
-            left = mid + 1
-        else: #找到目标位置
-            right = mid 
-    if left == len(tails): #如果找不到目标位置，则添加到末尾
-        tails.append(num)
+        if tail[mid] < num:
+            left = mid +1
+            mid = (left+right)//2
+        elif tail[mid] >= num: 
+            right = mid #mid有可能就是目标位置，所以设置 right=mid
+            mid = (left+right)//2
+    
+    if left == len(tail): #如果num大于所有tail，说明递增数组可以扩大
+        tail.append(num) 
     else:
-        tails[left] = num #如果找到目标位置，则更新该位置的值
+        tail[left] = num #找到left长度有更小的末尾元素
 
-print(len(tails))
+print(len(tail))
+
+        
+
+
