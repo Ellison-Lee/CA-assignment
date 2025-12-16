@@ -18,79 +18,23 @@ Chat Program - 最大化第k大元素
 输出：
 4
 """
+def find_kth(k,arr):
+    temp = sorted(arr,reverse=True) #temp.sort()是在原数组排序，temp=sorted()则不会
+    return temp[k-1]
 
-def find_kth_largest(arr, k):
-    """
-    找到数组中第k大的元素
-    
-    Args:
-        arr: 整数数组
-        k: 要找的第k大（k从1开始）
-    
-    Returns:
-        第k大的元素值
-    """
-    # 降序排序，第k大就是索引k-1的元素
-    sorted_arr = sorted(arr, reverse=True)
-    return sorted_arr[k - 1]
+try:
+    n,k,m,c,d = list(map(int,input().split()))
+    arr = list(map(int,input().split()))
+    ar_seq = [c+i*d for i in range(m)]
+    kth = find_kth(k,arr)
 
+    for i in range(n-m+1):
+        temp = arr[:] 
+        for j in range(m):
+            temp[i+j] += ar_seq[j]
+        curr_kth = find_kth(k,temp)
+        kth = max(kth,curr_kth)
 
-def solve(n, k, m, c, d, a):
-    """
-    解决Chat Program问题
-    
-    Args:
-        n: 序列长度
-        k: 要最大化的第k大元素
-        m: 子数组长度
-        c: 等差数列首项
-        d: 等差数列公差
-        a: 原始序列
-    
-    Returns:
-        操作后第k大元素的最大可能值
-    """
-    # 预计算等差数列
-    arithmetic_seq = [c + d * i for i in range(m)]
-    
-    # 初始化结果为不执行操作时的第k大元素
-    max_kth_largest = find_kth_largest(a, k)
-    
-    # 枚举所有可能的起始位置p（从0开始索引）
-    for p in range(n - m + 1):
-        # 创建临时数组并执行操作
-        temp_arr = a[:]
-        for i in range(m):
-            temp_arr[p + i] += arithmetic_seq[i]
-        
-        # 计算操作后的第k大元素
-        kth_largest = find_kth_largest(temp_arr, k)
-        
-        # 更新最大值
-        max_kth_largest = max(max_kth_largest, kth_largest)
-    
-    return max_kth_largest
-
-
-def main():
-    """主函数：读取输入并输出结果"""
-    try:
-        # 读取第一行：n, k, m, c, d
-        first_line = input().strip()
-        n, k, m, c, d = map(int, first_line.split())
-        
-        # 读取第二行：序列a
-        second_line = input().strip()
-        a = list(map(int, second_line.split()))
-        
-        # 求解并输出结果
-        result = solve(n, k, m, c, d, a)
-        print(result)
-    
-    except EOFError:
-        exit()
-
-
-if __name__ == "__main__":
-    main()
-
+    print(kth)
+except EOFError:
+    exit()

@@ -20,6 +20,6 @@ try:
             if i != k:
                 result.append(str(i))
         # 用空格连接所有元素并输出
-        print(' '.join(result))
+        print(*result) #解包
 except EOFError:
     exit()

@@ -37,9 +37,9 @@ class LCA:
         self.graph[u].append(v)
         self.graph[v].append(u)
 
-    def prepocess(self): #预处理，初始化depth，up
+    def prepocess(self): #预处理，DFS初始化depth，up
         stack = [[self.root,-1,0]]
-        while stack:
+        while stack: #完善深度，父节点
             u,parent,d = stack.pop()
             self.depth[u] = d
             self.up[u][0] = parent
@@ -48,7 +48,7 @@ class LCA:
                 if v != parent: #避免是parent
                     stack.append([v,u,d+1])
 
-        for d in range(1,self.max_log): #初始化各个元素的深度
+        for d in range(1,self.max_log): #完善倍增表
             for u in range(1,self.n+1):
                 if self.up[u][d-1] != -1:
                     self.up[u][d] = self.up[self.up[u][d-1]][d-1]

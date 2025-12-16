@@ -28,7 +28,7 @@ c_max = 0 #当前最大值
 g_max = 0 #全局最大值
 
 for num in arr:
-    c_max = max(0,c_max+num) #如果当前数组和为负，则从下一个数重新开始
+    c_max = max(num,c_max+num) #如果当前数组和为负，则从当前的数重新开始
     g_max = max(c_max,g_max)
 
 print(g_max)
